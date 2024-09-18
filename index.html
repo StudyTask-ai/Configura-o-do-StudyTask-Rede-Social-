@@ -27,6 +27,7 @@
         h2 {
             margin-top: 0;
             color: #1da1f2;
+            text-align: center;
         }
 
         .section {
@@ -39,7 +40,7 @@
             font-weight: bold;
         }
 
-        .section select, .section input[type="text"], .section input[type="password"] {
+        .section select, .section input[type="text"], .section input[type="password"], .section input[type="checkbox"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -47,14 +48,7 @@
             border: 1px solid #ccc;
             transition: background-color 0.3s, color 0.3s;
             font-size: 1em;
-        }
-
-        .toggle {
-            margin-bottom: 10px;
-        }
-
-        .toggle label {
-            margin-right: 10px;
+            box-sizing: border-box;
         }
 
         .button {
@@ -65,23 +59,32 @@
             color: #fff;
             font-size: 1em;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
         }
 
         .button:hover {
             background-color: #0d8cd5;
+            transform: translateY(-2px);
         }
 
-        .feedback, .success {
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1da1f2;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: none;
-        }
-
-        .feedback {
-            color: red;
-        }
-
-        .success {
-            color: green;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
         .dark-theme .container, .dark-theme body {
@@ -162,19 +165,78 @@
             <label for="pin">Configurar PIN:</label>
             <input type="password" id="pin" placeholder="Digite seu PIN">
             <button class="button" onclick="validatePin()">Salvar PIN</button>
-            <div class="feedback" id="feedback">PIN incorreto. Tente novamente.</div>
-            <div class="success" id="success">PIN salvo com sucesso!</div>
         </div>
+
+        <!-- Botão de Salvar Configurações -->
+        <button class="button" onclick="saveSettings()">Salvar Configurações</button>
     </div>
 
+    <div class="message-box" id="messageBox">Configurações salvas com sucesso!</div>
+
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+        });
+
         document.getElementById('theme').addEventListener('change', function() {
             const theme = this.value;
+            setTheme(theme);
+        });
+
+        document.getElementById('font').addEventListener('change', function() {
+            document.body.style.fontFamily = this.value;
+        });
+
+        document.getElementById('gradient').addEventListener('change', function() {
+            if (this.checked) {
+                document.body.style.backgroundImage = 'linear-gradient(to right, #1da1f2, #007bb5)';
+            } else {
+                document.body.style.backgroundImage = 'none';
+            }
+        });
+
+        function validatePin() {
+            const pinInput = document.getElementById('pin').value;
+            const successMessage = pinInput === "1234" ? "PIN salvo com sucesso!" : "PIN incorreto. Tente novamente.";
+            displayMessage(successMessage, pinInput === "1234");
+        }
+
+        function saveSettings() {
+            const theme = document.getElementById('theme').value;
+            const font = document.getElementById('font').value;
+            const gradient = document.getElementById('gradient').checked;
+            const imageQuality = document.getElementById('imageQuality').checked;
+
+            localStorage.setItem('theme', theme);
+            localStorage.setItem('font', font);
+            localStorage.setItem('gradient', gradient);
+            localStorage.setItem('imageQuality', imageQuality);
+
+            displayMessage('Configurações salvas com sucesso!', true);
+        }
+
+        function loadSettings() {
+            const theme = localStorage.getItem('theme') || 'default';
+            const font = localStorage.getItem('font') || 'Arial';
+            const gradient = localStorage.getItem('gradient') === 'true';
+            const imageQuality = localStorage.getItem('imageQuality') === 'true';
+
+            document.getElementById('theme').value = theme;
+            document.getElementById('font').value = font;
+            document.getElementById('gradient').checked = gradient;
+            document.getElementById('imageQuality').checked = imageQuality;
+
+            setTheme(theme);
+            document.body.style.fontFamily = font;
+            document.body.style.backgroundImage = gradient ? 'linear-gradient(to right, #1da1f2, #007bb5)' : 'none';
+        }
+
+        function setTheme(theme) {
             const body = document.body;
-            body.className = ''; // Resetando a classe do body
+            body.className = '';
 
             if (theme !== 'default') {
-                body.classList.add('dark-theme'); // Adiciona a classe de tema escuro se não for o padrão
+                body.classList.add('dark-theme');
             }
             
             const colorMap = {
@@ -195,32 +257,19 @@
             };
 
             body.style.backgroundColor = colorMap[theme] || '#f4f4f9';
-        });
+        }
 
-        document.getElementById('font').addEventListener('change', function() {
-            document.body.style.fontFamily = this.value;
-        });
+        function displayMessage(message, isSuccess) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.style.backgroundColor = isSuccess ? '#1da1f2' : '#e74c3c';
+            messageBox.style.opacity = 1;
+            messageBox.style.display = 'block';
 
-        document.getElementById('gradient').addEventListener('change', function() {
-            if (this.checked) {
-                document.body.style.backgroundImage = 'linear-gradient(to right, #1da1f2, #007bb5)';
-            } else {
-                document.body.style.backgroundImage = 'none';
-            }
-        });
-
-        function validatePin() {
-            const pinInput = document.getElementById('pin').value;
-            const feedback = document.getElementById('feedback');
-            const success = document.getElementById('success');
-
-            if (pinInput === "1234") { // Substitua por um método de validação real
-                feedback.style.display = 'none';
-                success.style.display = 'block';
-            } else {
-                success.style.display = 'none';
-                feedback.style.display = 'block';
-            }
+            setTimeout(() => {
+                messageBox.style.opacity = 0;
+                setTimeout(() => messageBox.style.display = 'none', 300);
+            }, 3000);
         }
     </script>
 </body>
