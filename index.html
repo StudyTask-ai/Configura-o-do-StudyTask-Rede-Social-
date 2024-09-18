@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações de Tema - StudyTask</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #1da1f2;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .section select, .section input[type="text"], .section input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 1em;
+        }
+
+        .toggle {
+            margin-bottom: 10px;
+        }
+
+        .toggle label {
+            margin-right: 10px;
+        }
+
+        .button {
+            padding: 10px 15px;
+            background-color: #1da1f2;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #0d8cd5;
+        }
+
+        .feedback, .success {
+            display: none;
+        }
+
+        .feedback {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .dark-theme .container, .dark-theme body {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .dark-theme input, .dark-theme select {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Configurações de Tema</h2>
+        
+        <!-- Configuração de Tema -->
+        <div class="section">
+            <label for="theme">Cor do Tema:</label>
+            <select id="theme">
+                <option value="default">Padrão</option>
+                <option value="black">Preto</option>
+                <option value="dark-gray">Cinza Escuro</option>
+                <option value="charcoal">Carvão</option>
+                <option value="onyx">Ônix</option>
+                <option value="midnight">Meia-noite</option>
+                <option value="jet">Jato</option>
+                <option value="eerie">Eerie</option>
+                <option value="raisin">Raisin</option>
+                <option value="outer-space">Outer Space</option>
+                <option value="dim-gray">Cinza Dim</option>
+                <option value="davys-gray">Cinza Davys</option>
+                <option value="charcoal-gray">Cinza Carvão</option>
+                <option value="gunmetal">Gunmetal</option>
+                <option value="black-coral">Coral Preto</option>
+            </select>
+        </div>
+
+        <!-- Configuração de Fonte -->
+        <div class="section">
+            <label for="font">Fonte:</label>
+            <select id="font">
+                <option value="Arial">Arial</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Impact">Impact</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+                <option value="Palatino Linotype">Palatino Linotype</option>
+                <option value="Lucida Sans Unicode">Lucida Sans Unicode</option>
+                <option value="Segoe UI">Segoe UI</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Lato">Lato</option>
+            </select>
+        </div>
+
+        <!-- Ativar Gradiente -->
+        <div class="section toggle">
+            <label for="gradient">Ativar Gradiente:</label>
+            <input type="checkbox" id="gradient">
+        </div>
+
+        <!-- Qualidade das Imagens -->
+        <div class="section toggle">
+            <label for="imageQuality">Qualidade das Imagens Alta:</label>
+            <input type="checkbox" id="imageQuality">
+            <small>Consome mais internet.</small>
+        </div>
+
+        <!-- Configuração de PIN -->
+        <div class="section">
+            <label for="pin">Configurar PIN:</label>
+            <input type="password" id="pin" placeholder="Digite seu PIN">
+            <button class="button" onclick="validatePin()">Salvar PIN</button>
+            <div class="feedback" id="feedback">PIN incorreto. Tente novamente.</div>
+            <div class="success" id="success">PIN salvo com sucesso!</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('theme').addEventListener('change', function() {
+            const theme = this.value;
+            const body = document.body;
+            body.className = ''; // Resetando a classe do body
+
+            if (theme !== 'default') {
+                body.classList.add('dark-theme'); // Adiciona a classe de tema escuro se não for o padrão
+            }
+            
+            const colorMap = {
+                'black': '#000',
+                'dark-gray': '#1c1c1c',
+                'charcoal': '#333',
+                'onyx': '#353839',
+                'midnight': '#2c3e50',
+                'jet': '#343434',
+                'eerie': '#1b1b1b',
+                'raisin': '#2e2e2e',
+                'outer-space': '#414a4c',
+                'dim-gray': '#696969',
+                'davys-gray': '#555555',
+                'charcoal-gray': '#4a4a4a',
+                'gunmetal': '#2a3439',
+                'black-coral': '#54626f'
+            };
+
+            body.style.backgroundColor = colorMap[theme] || '#f4f4f9';
+        });
+
+        document.getElementById('font').addEventListener('change', function() {
+            document.body.style.fontFamily = this.value;
+        });
+
+        document.getElementById('gradient').addEventListener('change', function() {
+            if (this.checked) {
+                document.body.style.backgroundImage = 'linear-gradient(to right, #1da1f2, #007bb5)';
+            } else {
+                document.body.style.backgroundImage = 'none';
+            }
+        });
+
+        function validatePin() {
+            const pinInput = document.getElementById('pin').value;
+            const feedback = document.getElementById('feedback');
+            const success = document.getElementById('success');
+
+            if (pinInput === "1234") { // Substitua por um método de validação real
+                feedback.style.display = 'none';
+                success.style.display = 'block';
+            } else {
+                success.style.display = 'none';
+                feedback.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
